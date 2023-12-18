@@ -6,7 +6,10 @@ ARG RUNNER_VERSION="2.311.0"
 ENV DEBIAN_FRONTEND=noninteractive
 
 
-RUN apt-get update && apt-get install -y curl
+RUN apt-get update && apt-get install -y \
+    curl docker.io sudo software-properties-common python3-pip && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
 
 # Prep the directory for the runner
 RUN mkdir -p /opt/actions-runner && cd /opt/actions-runner
@@ -26,8 +29,16 @@ ARG RUNNER_NAME_PREFIX="runner-"
 RUN echo "${RUNNER_NAME_PREFIX}$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 8)" > /runner_name.txt
 
 # Setup the non-root user and downgrade from root
-RUN useradd runner && chown runner:runner -R /opt/actions-runner
+ARG DOCKER_GID=999
+RUN groupmod -g ${DOCKER_GID} docker && useradd -m -s /bin/bash runner && usermod -aG docker runner && echo "runner ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && chown runner:runner -R /opt/actions-runner
 USER runner
+ENV PATH="/home/runner/.local/bin:$PATH"
+
+# Install rootless docker
+# RUN curl -fsSL https://get.docker.com/rootless | SKIP_IPTABLES=1 sh
+
+# ENV PATH=/home/runner/bin:$PATH
+# ENV DOCKER_HOST=unix:///home/runner/.docker/run/docker.sock
 
 ######################
 # Configure the runner

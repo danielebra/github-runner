@@ -34,12 +34,6 @@ RUN groupmod -g ${DOCKER_GID} docker && useradd -m -s /bin/bash runner && usermo
 USER runner
 ENV PATH="/home/runner/.local/bin:$PATH"
 
-# Install rootless docker
-# RUN curl -fsSL https://get.docker.com/rootless | SKIP_IPTABLES=1 sh
-
-# ENV PATH=/home/runner/bin:$PATH
-# ENV DOCKER_HOST=unix:///home/runner/.docker/run/docker.sock
-
 ######################
 # Configure the runner
 ######################

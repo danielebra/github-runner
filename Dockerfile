@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 
 RUN apt-get update && apt-get install -y \
-    curl docker.io sudo software-properties-common python3-pip && \
+    curl docker.io docker-buildx sudo software-properties-common python3-pip && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 
